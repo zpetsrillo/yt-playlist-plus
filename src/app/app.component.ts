@@ -1,17 +1,11 @@
 import { Component } from '@angular/core';
-
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'song-rater';
-
-    constructor(private db: AngularFirestore) {
-      const things = db.collection('songs').valueChanges();
-      things.subscribe(console.log);
-  }
+  constructor(public auth: AuthService) {}
 }

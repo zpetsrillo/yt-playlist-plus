@@ -9,21 +9,20 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { ListenComponent } from './listen/listen.component';
 
 const config = {
-  apiKey: "AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o",
-  authDomain: "song-rater.firebaseapp.com",
-  databaseURL: "https://song-rater.firebaseio.com",
-  projectId: "song-rater",
-  storageBucket: "song-rater.appspot.com",
-  messagingSenderId: "923959586301",
-  appId: "1:923959586301:web:9bb56c6ae3a216d8f2fd94"
+  apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
+  authDomain: 'song-rater.firebaseapp.com',
+  databaseURL: 'https://song-rater.firebaseio.com',
+  projectId: 'song-rater',
+  storageBucket: 'song-rater.appspot.com',
+  messagingSenderId: '923959586301',
+  appId: '1:923959586301:web:9bb56c6ae3a216d8f2fd94',
 };
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent, ListenComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -31,9 +30,9 @@ const config = {
     AngularFireModule.initializeApp(config),
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth
-    AngularFireStorageModule // storage
+    AngularFireStorageModule, // storage
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

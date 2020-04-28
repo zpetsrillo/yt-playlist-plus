@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
+import { ListenComponent } from './listen/listen.component';
+import { AuthGuard } from './services/auth.guard';
 
-
+const routes: Routes = [
+  { path: 'listen', component: ListenComponent, canActivate: [AuthGuard] },
+];
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
