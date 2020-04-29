@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { PlaylistService } from './services/playlist.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,5 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, public playlist: PlaylistService) {}
 }
