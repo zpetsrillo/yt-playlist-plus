@@ -7,7 +7,7 @@ import {
 } from '@angular/fire/firestore';
 
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { Song } from './song.model';
 import { User } from './user.model';
 
@@ -17,24 +17,41 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class PlaylistService {
-  playlist$: AngularFirestoreCollection<Song[]>;
+  playlistCollection: AngularFirestoreCollection<Song>;
+  playlist: Observable<Song[]>;
+  songDoc: AngularFirestoreDocument<Song>;
+
   user: User;
 
   constructor(private afs: AngularFirestore, public auth: AuthService) {
-    auth.user$.subscribe((val) => {
+    auth.getUser().subscribe((val) => {
       this.user = val;
 
-      this.playlist$ = this.afs.collection<Song[]>(`songs`, (ref) =>
-        ref.where('uid', '==', this.user.uid)
-      );
+      if (this.user) {
+        this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
+          ref.where('uid', '==', this.user.uid)
+        );
 
-      this.playlist$.valueChanges().subscribe((val) => console.log(val));
-      // this.updateSongData({
-      //   uid: this.user.uid,
-      //   watchCode: 'testing',
-      //   rating: 1800,
-      //   tags: { happy: true },
-      // });
+        this.playlist = this.playlistCollection.snapshotChanges().pipe(
+          map((changes) => {
+            return changes.map((a) => {
+              const data = a.payload.doc.data() as Song;
+              data.id = a.payload.doc.id;
+              return data;
+            });
+          })
+        );
+
+        // this.addSong({
+        //   uid: this.user.uid,
+        //   watchCode: 'testing',
+        //   rating: 1200,
+        //   tags: { hiphop: true },
+        // });
+        // this.getPlaylist().subscribe((x) => {
+        //   this.updateSong(x[0]);
+        // });
+      }
     });
   }
 
@@ -51,5 +68,29 @@ export class PlaylistService {
     };
 
     return songRef.set(data, { merge: true });
+  }
+
+  public getPlaylist() {
+    return this.playlist;
+  }
+
+  public addSong(song: Song) {
+    this.playlistCollection.add(song);
+  }
+
+  public deleteSong(song: Song) {
+    this.songDoc = this.afs.doc(`songs/${song.id}`);
+    this.songDoc.delete();
+  }
+
+  public updateSong(song: Song) {
+    this.songDoc = this.afs.doc(`songs/${song.id}`);
+    let updatedSong: Song = {
+      uid: song.uid,
+      rating: song.rating,
+      tags: song.tags,
+      watchCode: song.watchCode,
+    };
+    this.songDoc.update(updatedSong);
   }
 }

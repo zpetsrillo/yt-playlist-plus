@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ListenComponent } from './listen/listen.component';
+import { ListenComponent } from './components/listen/listen.component';
 import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [

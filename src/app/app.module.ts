@@ -9,7 +9,12 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { ListenComponent } from './listen/listen.component';
+
+import { ListenComponent } from './components/listen/listen.component';
+
+import { AuthService } from './services/auth.service';
+import { PlaylistService } from './services/playlist.service';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 const config = {
   apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
@@ -22,7 +27,7 @@ const config = {
 };
 
 @NgModule({
-  declarations: [AppComponent, ListenComponent],
+  declarations: [AppComponent, ListenComponent, NavbarComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -32,7 +37,7 @@ const config = {
     AngularFireAuthModule, // auth
     AngularFireStorageModule, // storage
   ],
-  providers: [],
+  providers: [AuthService, PlaylistService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

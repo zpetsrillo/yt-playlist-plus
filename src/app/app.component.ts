@@ -8,5 +8,8 @@ import { PlaylistService } from './services/playlist.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  constructor(public auth: AuthService, public playlist: PlaylistService) {}
+  constructor(
+    public authService: AuthService,
+    public playlistService: PlaylistService
+  ) {}
 }

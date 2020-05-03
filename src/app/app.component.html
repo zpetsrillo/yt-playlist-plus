@@ -1,19 +1,4 @@
-<h1>Song Rater</h1>
-
-<div *ngIf="auth.user$ | async as user; else login">
-  <pre>
-    {{ user | json }}
-    </pre
-  >
-  <hr />
-  <button class="button" (click)="auth.signOut()">Sign Out</button>
-</div>
-
-<ng-template #login>
-  <button class="button" (click)="auth.googleSignin()">
-    Sign in with Google
-  </button>
-</ng-template>
+<app-navbar></app-navbar>
 
 <button routerLink="/listen">Listen</button>
 

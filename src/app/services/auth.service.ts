@@ -58,4 +58,8 @@ export class AuthService {
 
     return userRef.set(data, { merge: true });
   }
+
+  public getUser() {
+    return this.user$;
+  }
 }
