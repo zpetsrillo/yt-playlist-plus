@@ -1,16 +1,19 @@
-<h1>Song Rater</h1>
+<mat-toolbar>
+  <mat-toolbar-row>
+    <span>YT Song Rater</span>
+    <span class="spacer"></span>
+    <div *ngIf="auth.user$ | async as user; else login">
+      <span class="displayName">{{ user.displayName }}</span>
+      <button mat-stroked-button routerLink="/listen">Listen</button>
+      <button mat-stroked-button routerLink="/about">About</button>
+      <button mat-flat-button (click)="auth.signOut()">Sign Out</button>
+    </div>
 
-<div *ngIf="auth.user$ | async as user; else login">
-  <pre>
-    {{ user | json }}
-    </pre
-  >
-  <hr />
-  <button class="button" (click)="auth.signOut()">Sign Out</button>
-</div>
-
-<ng-template #login>
-  <button class="button" (click)="auth.googleSignin()">
-    Sign in with Google
-  </button>
-</ng-template>
+    <ng-template #login>
+      <button mat-stroked-button routerLink="/about">About</button>
+      <button mat-flat-button color="primary" (click)="auth.googleSignin()">
+        Sign in with Google
+      </button>
+    </ng-template>
+  </mat-toolbar-row>
+</mat-toolbar>

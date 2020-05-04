@@ -5,6 +5,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -15,6 +20,7 @@ import { ListenComponent } from './components/listen/listen.component';
 import { AuthService } from './services/auth.service';
 import { PlaylistService } from './services/playlist.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { AboutComponent } from './components/about/about.component';
 
 const config = {
   apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
@@ -27,11 +33,15 @@ const config = {
 };
 
 @NgModule({
-  declarations: [AppComponent, ListenComponent, NavbarComponent],
+  declarations: [AppComponent, ListenComponent, NavbarComponent, AboutComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatInputModule,
+    MatFormFieldModule,
     AngularFireModule.initializeApp(config),
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth
