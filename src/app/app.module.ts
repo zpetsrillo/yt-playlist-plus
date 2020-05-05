@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { NgxYoutubePlayerModule } from 'ngx-youtube-player';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
@@ -33,11 +35,17 @@ const config = {
 };
 
 @NgModule({
-  declarations: [AppComponent, ListenComponent, NavbarComponent, AboutComponent],
+  declarations: [
+    AppComponent,
+    ListenComponent,
+    NavbarComponent,
+    AboutComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    NgxYoutubePlayerModule,
     MatButtonModule,
     MatToolbarModule,
     MatInputModule,
