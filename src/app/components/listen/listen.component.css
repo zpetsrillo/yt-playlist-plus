@@ -7,3 +7,13 @@
 ::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple {
   background-color: #fb5050 !important;
 } */
+
+.input {
+  padding-right: 1rem;
+}
+
+button {
+  margin-right: 8px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}

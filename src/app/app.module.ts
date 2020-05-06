@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -23,6 +24,8 @@ import { AuthService } from './services/auth.service';
 import { PlaylistService } from './services/playlist.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AboutComponent } from './components/about/about.component';
+
+import { FormsModule } from '@angular/forms';
 
 const config = {
   apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
@@ -46,10 +49,12 @@ const config = {
     AppRoutingModule,
     BrowserAnimationsModule,
     NgxYoutubePlayerModule,
+    FormsModule,
     MatButtonModule,
     MatToolbarModule,
     MatInputModule,
     MatFormFieldModule,
+    MatChipsModule,
     AngularFireModule.initializeApp(config),
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth

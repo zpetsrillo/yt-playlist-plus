@@ -74,8 +74,14 @@ export class PlaylistService {
     return this.playlist;
   }
 
-  public addSong(song: Song) {
-    this.playlistCollection.add(song);
+  public addSong(watchCode: string) {
+    const newSong = {
+      uid: this.user.uid,
+      watchCode,
+      rating: 1200,
+      tags: {},
+    };
+    this.playlistCollection.add(newSong);
   }
 
   public deleteSong(song: Song) {
