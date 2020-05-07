@@ -1,5 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { PlaylistService } from 'src/app/services/playlist.service';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import {
+  MatAutocompleteSelectedEvent,
+  MatAutocomplete,
+} from '@angular/material/autocomplete';
 
 import { Song } from '../../services/song.model';
 
@@ -10,12 +18,25 @@ import { Song } from '../../services/song.model';
 })
 export class ListenComponent implements OnInit {
   songs: Song[];
+  tagCounts: any;
   videoUrl: any;
   currentSong: Song;
   watchCode: string;
   inputWatchCode: string;
 
   player: YT.Player;
+
+  visible = true;
+  selectable = true;
+  removable = true;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  fruitCtrl = new FormControl();
+  filteredFruits: Observable<string[]>;
+  fruits: string[] = ['Lemon'];
+  allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+
+  @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
   constructor(public playlistService: PlaylistService) {}
 
@@ -25,7 +46,22 @@ export class ListenComponent implements OnInit {
       this.currentSong = this.songs[
         Math.floor(Math.random() * this.songs.length)
       ];
+
+      const tagCounts = {};
+      for (let song of this.songs) {
+        for (let tag of song.tags) {
+          tagCounts[tag] = tagCounts[tag] + 1 || 1;
+        }
+      }
+      this.tagCounts = tagCounts;
     });
+
+    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+      startWith(null),
+      map((fruit: string | null) =>
+        fruit ? this._filter(fruit) : this.allFruits.slice()
+      )
+    );
   }
 
   // Run on initial player load
@@ -56,15 +92,15 @@ export class ListenComponent implements OnInit {
 
   // Return random watch code from playlist
   getRandomWatchCode() {
-    let nextWatchCode: string = this.currentSong.watchCode;
+    let nextWatchCode: string;
     let nextSong: Song;
-    while (
-      nextWatchCode == this.currentSong.watchCode &&
-      this.songs.length > 1
-    ) {
+    do {
       nextSong = this.songs[Math.floor(Math.random() * this.songs.length)];
       nextWatchCode = nextSong.watchCode;
-    }
+    } while (
+      nextWatchCode == this.currentSong.watchCode &&
+      this.songs.length != 1
+    );
     this.currentSong = nextSong;
     return nextWatchCode;
   }
@@ -81,5 +117,58 @@ export class ListenComponent implements OnInit {
   removeSong() {
     this.playlistService.deleteSong(this.currentSong);
     this.playRandomVideo();
+  }
+
+  filterByTag(tag: string) {
+    if (tag) {
+      this.playlistService.applyFilter(tag);
+    } else {
+      this.playlistService.noFilter();
+    }
+    this.playlistService.getPlaylist().subscribe((songs) => {
+      this.songs = songs;
+      if (tag && !this.currentSong.tags.includes(tag)) {
+        this.playRandomVideo();
+      }
+    });
+  }
+
+  add(event): void {
+    const input = event.input;
+    const value = event.value;
+
+    // Add our fruit
+    if ((value || '').trim()) {
+      this.fruits.push(value.trim());
+    }
+
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+
+    this.fruitCtrl.setValue(null);
+  }
+
+  remove(fruit: string): void {
+    const index = this.fruits.indexOf(fruit);
+
+    if (index >= 0) {
+      this.fruits.splice(index, 1);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.fruits.push(event.option.viewValue);
+    this.fruitInput.nativeElement.value = '';
+    this.fruitCtrl.setValue(null);
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.allFruits.filter(
+      (fruit) => fruit.toLowerCase().indexOf(filterValue) === 0
+    );
   }
 }

@@ -7,12 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NgxYoutubePlayerModule } from 'ngx-youtube-player';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
-
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -25,7 +19,8 @@ import { PlaylistService } from './services/playlist.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AboutComponent } from './components/about/about.component';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from './modules/material/material.module';
 
 const config = {
   apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
@@ -50,11 +45,8 @@ const config = {
     BrowserAnimationsModule,
     NgxYoutubePlayerModule,
     FormsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatChipsModule,
+    ReactiveFormsModule,
+    MaterialModule,
     AngularFireModule.initializeApp(config),
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth

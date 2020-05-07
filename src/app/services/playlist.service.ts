@@ -28,34 +28,12 @@ export class PlaylistService {
       this.user = val;
 
       if (this.user) {
-        this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
-          ref.where('uid', '==', this.user.uid)
-        );
-
-        this.playlist = this.playlistCollection.snapshotChanges().pipe(
-          map((changes) => {
-            return changes.map((a) => {
-              const data = a.payload.doc.data() as Song;
-              data.id = a.payload.doc.id;
-              return data;
-            });
-          })
-        );
-
-        // this.addSong({
-        //   uid: this.user.uid,
-        //   watchCode: 'testing',
-        //   rating: 1200,
-        //   tags: { hiphop: true },
-        // });
-        // this.getPlaylist().subscribe((x) => {
-        //   this.updateSong(x[0]);
-        // });
+        this.noFilter();
       }
     });
   }
 
-  private updateSongData({ uid, watchCode, rating, tags }: Song) {
+  private updateSongData({ uid, watchCode, tags }: Song) {
     const songRef: AngularFirestoreDocument<Song> = this.afs.doc(
       `songs/${uid}.${watchCode}`
     );
@@ -63,7 +41,6 @@ export class PlaylistService {
     const data = {
       uid,
       watchCode,
-      rating,
       tags,
     };
 
@@ -78,8 +55,7 @@ export class PlaylistService {
     const newSong = {
       uid: this.user.uid,
       watchCode,
-      rating: 1200,
-      tags: {},
+      tags: [],
     };
     this.playlistCollection.add(newSong);
   }
@@ -93,10 +69,41 @@ export class PlaylistService {
     this.songDoc = this.afs.doc(`songs/${song.id}`);
     let updatedSong: Song = {
       uid: song.uid,
-      rating: song.rating,
       tags: song.tags,
       watchCode: song.watchCode,
     };
     this.songDoc.update(updatedSong);
+  }
+
+  public applyFilter(tag: string) {
+    this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
+      ref.where('uid', '==', this.user.uid).where(`tags`, 'array-contains', tag)
+    );
+
+    this.playlist = this.playlistCollection.snapshotChanges().pipe(
+      map((changes) => {
+        return changes.map((a) => {
+          const data = a.payload.doc.data() as Song;
+          data.id = a.payload.doc.id;
+          return data;
+        });
+      })
+    );
+  }
+
+  public noFilter() {
+    this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
+      ref.where('uid', '==', this.user.uid)
+    );
+
+    this.playlist = this.playlistCollection.snapshotChanges().pipe(
+      map((changes) => {
+        return changes.map((a) => {
+          const data = a.payload.doc.data() as Song;
+          data.id = a.payload.doc.id;
+          return data;
+        });
+      })
+    );
   }
 }

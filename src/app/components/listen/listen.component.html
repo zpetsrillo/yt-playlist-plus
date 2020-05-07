@@ -4,27 +4,73 @@
 </mat-form-field>
 
 <div *ngIf="songs?.length > 0; else noSongs">
-  <youtube-player
-    width="560"
-    height="315"
-    [videoId]="currentSong.watchCode"
-    (ready)="savePlayer($event)"
-    (change)="onStateChange($event)"
-  ></youtube-player>
+  <div class="video-container">
+    <youtube-player
+      width="100%"
+      height="100%"
+      class="video"
+      [videoId]="currentSong.watchCode"
+      (ready)="savePlayer($event)"
+      (change)="onStateChange($event)"
+    ></youtube-player>
+  </div>
   <div>
     <button mat-raised-button color="primary" (click)="playRandomVideo()">
       Skip
     </button>
-    <button mat-raised-button color="warn" (click)="removeSong()">
-      Remove from playlist
+    <button mat-raised-button color="accent" (click)="removeSong()">
+      Remove
     </button>
+    <span *ngIf="tagCounts">
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <mat-select (selectionChange)="filterByTag($event.value)">
+          <mat-option>None</mat-option>
+          <mat-option
+            *ngFor="let tag of tagCounts | keyvalue"
+            [value]="tag.key"
+            >{{ tag.key }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </span>
   </div>
-  <mat-chip-list>
-    <mat-chip color="primary" selected>{{ currentSong.rating }}</mat-chip>
+  <!-- <mat-chip-list>
     <div *ngFor="let tag of currentSong.tags | keyvalue">
-      <mat-chip color="accent" selected>{{ tag.key }}</mat-chip>
+      <mat-chip color="primary" selected>{{ tag.value }}</mat-chip>
     </div>
-  </mat-chip-list>
+  </mat-chip-list> -->
+
+  <mat-form-field class="example-chip-list">
+    <mat-chip-list #chipList aria-label="Fruit selection">
+      <mat-chip
+        *ngFor="let fruit of fruits"
+        [selectable]="selectable"
+        [removable]="removable"
+        (removed)="remove(fruit)"
+      >
+        {{ fruit }}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="New fruit..."
+        #fruitInput
+        [formControl]="fruitCtrl"
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event)"
+      />
+    </mat-chip-list>
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="selected($event)"
+    >
+      <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
+        {{ fruit }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
 </div>
 
 <ng-template #noSongs>

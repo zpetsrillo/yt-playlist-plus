@@ -1,19 +1,18 @@
-<mat-toolbar>
-  <mat-toolbar-row>
-    <h1>YT Playlist Plus</h1>
-    <span class="spacer"></span>
-    <div *ngIf="auth.user$ | async as user; else login">
-      <span>{{ user.displayName }}</span>
-      <button mat-stroked-button routerLink="/listen">Listen</button>
-      <button mat-stroked-button routerLink="/about">About</button>
-      <button mat-flat-button (click)="auth.signOut()">Sign Out</button>
-    </div>
+<mat-toolbar class="navbar">
+  <div>Playlist Plus</div>
+  <div *ngIf="auth.user$ | async as user; else login">
+    <span>{{ user.displayName }}</span>
+    <button mat-stroked-button routerLink="/listen">Listen</button>
+    <button mat-stroked-button routerLink="/about">About</button>
+    <button mat-flat-button (click)="auth.signOut()">Sign Out</button>
+  </div>
 
-    <ng-template #login>
+  <ng-template #login>
+    <div>
       <button mat-stroked-button routerLink="/about">About</button>
       <button mat-flat-button color="primary" (click)="auth.googleSignin()">
         Sign in with Google
       </button>
-    </ng-template>
-  </mat-toolbar-row>
+    </div>
+  </ng-template>
 </mat-toolbar>
