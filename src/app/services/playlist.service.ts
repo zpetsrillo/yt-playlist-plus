@@ -33,20 +33,6 @@ export class PlaylistService {
     });
   }
 
-  private updateSongData({ uid, watchCode, tags }: Song) {
-    const songRef: AngularFirestoreDocument<Song> = this.afs.doc(
-      `songs/${uid}.${watchCode}`
-    );
-
-    const data = {
-      uid,
-      watchCode,
-      tags,
-    };
-
-    return songRef.set(data, { merge: true });
-  }
-
   public getPlaylist() {
     return this.playlist;
   }
@@ -76,9 +62,10 @@ export class PlaylistService {
   }
 
   public applyFilter(tag: string) {
-    this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
-      ref.where('uid', '==', this.user.uid).where(`tags`, 'array-contains', tag)
-    );
+    this.playlistCollection = this.afs
+      .collection(`users`)
+      .doc(this.user.uid)
+      .collection('songs', (ref) => ref.where(`tags`, 'array-contains', tag));
 
     this.playlist = this.playlistCollection.snapshotChanges().pipe(
       map((changes) => {
@@ -92,9 +79,10 @@ export class PlaylistService {
   }
 
   public noFilter() {
-    this.playlistCollection = this.afs.collection<Song>(`songs`, (ref) =>
-      ref.where('uid', '==', this.user.uid)
-    );
+    this.playlistCollection = this.afs
+      .collection(`users`)
+      .doc(this.user.uid)
+      .collection('songs');
 
     this.playlist = this.playlistCollection.snapshotChanges().pipe(
       map((changes) => {
