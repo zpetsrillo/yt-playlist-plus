@@ -1,0 +1,14 @@
+.primary-color {
+  color: #9c27b0;
+}
+
+.title {
+  font-size: 10vw;
+}
+
+.centered-title {
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

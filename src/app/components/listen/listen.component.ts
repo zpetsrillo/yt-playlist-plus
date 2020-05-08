@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, min } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
   MatAutocompleteSelectedEvent,
@@ -30,12 +30,12 @@ export class ListenComponent implements OnInit {
   selectable = true;
   removable = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  fruitCtrl = new FormControl();
-  filteredFruits: Observable<string[]>;
-  fruits: string[] = ['Lemon'];
-  allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+  tagCtrl = new FormControl();
+  filteredTags: Observable<string[]>;
+  tags: string[];
+  allTags: string[];
 
-  @ViewChild('fruitInput') fruitInput: ElementRef<HTMLInputElement>;
+  @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
   constructor(public playlistService: PlaylistService) {}
@@ -43,23 +43,29 @@ export class ListenComponent implements OnInit {
   ngOnInit(): void {
     this.playlistService.getPlaylist().subscribe((songs) => {
       this.songs = songs;
-      this.currentSong = this.songs[
-        Math.floor(Math.random() * this.songs.length)
-      ];
+      if (!this.currentSong) {
+        this.currentSong = this.songs[
+          Math.floor(Math.random() * this.songs.length)
+        ];
 
-      const tagCounts = {};
-      for (let song of this.songs) {
-        for (let tag of song.tags) {
-          tagCounts[tag] = tagCounts[tag] + 1 || 1;
+        const tagCounts = {};
+        for (let song of this.songs) {
+          for (let tag of song.tags) {
+            tagCounts[tag] = tagCounts[tag] + 1 || 1;
+          }
+        }
+        this.tagCounts = tagCounts;
+        this.allTags = Object.keys(tagCounts);
+        if (this.currentSong) {
+          this.tags = this.currentSong.tags;
         }
       }
-      this.tagCounts = tagCounts;
     });
 
-    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+    this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
-      map((fruit: string | null) =>
-        fruit ? this._filter(fruit) : this.allFruits.slice()
+      map((tag: string | null) =>
+        tag ? this._filter(tag) : this.allTags.slice()
       )
     );
   }
@@ -102,13 +108,29 @@ export class ListenComponent implements OnInit {
       this.songs.length != 1
     );
     this.currentSong = nextSong;
+    this.tags = this.currentSong.tags;
     return nextWatchCode;
   }
 
   // Add new song to playlist in database
   addSong() {
+    if (-1 != this.inputWatchCode.search(/[><]+/)) {
+      this.inputWatchCode = '';
+    }
     if (this.inputWatchCode) {
-      this.playlistService.addSong(this.inputWatchCode);
+      let code: string;
+      const re: RegExp = /youtube\.com\/watch\?v=([^&]+)($|&)/;
+
+      try {
+        code = re.exec(this.inputWatchCode)[1];
+      } catch (error) {
+        code = this.inputWatchCode;
+      }
+
+      this.playlistService.addSong(code);
+      if (!this.songs) {
+        this.playRandomVideo();
+      }
       this.inputWatchCode = '';
     }
   }
@@ -137,9 +159,14 @@ export class ListenComponent implements OnInit {
     const input = event.input;
     const value = event.value;
 
-    // Add our fruit
+    // Add our tag
     if ((value || '').trim()) {
-      this.fruits.push(value.trim());
+      this.tags.push(value.trim());
+
+      this.tagCounts[value.trim()] += 1;
+      this.allTags = Object.keys(this.tagCounts);
+
+      this.updateSong();
     }
 
     // Reset the input value
@@ -147,28 +174,62 @@ export class ListenComponent implements OnInit {
       input.value = '';
     }
 
-    this.fruitCtrl.setValue(null);
+    this.tagCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.fruits.indexOf(fruit);
+  remove(tag: string): void {
+    const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
-      this.fruits.splice(index, 1);
+      this.tags.splice(index, 1);
+
+      if (this.tagCounts[tag.trim()] > 0) {
+        this.tagCounts[tag.trim()] = this.tagCounts[tag.trim()] - 1;
+      } else {
+        delete this.tagCounts[tag.trim()];
+        const allTagsIndex = this.allTags.indexOf(tag);
+
+        if (allTagsIndex >= 0) {
+          this.allTags.splice(allTagsIndex, 1);
+        }
+      }
+
+      this.updateSong();
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.fruits.push(event.option.viewValue);
-    this.fruitInput.nativeElement.value = '';
-    this.fruitCtrl.setValue(null);
+    const tag = event.option.viewValue;
+    this.tags.push(tag);
+    this.tagInput.nativeElement.value = '';
+    this.tagCtrl.setValue(null);
+
+    this.tagCounts[tag] += 1;
+    this.allTags = Object.keys(this.tagCounts);
+
+    this.updateSong();
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.allFruits.filter(
-      (fruit) => fruit.toLowerCase().indexOf(filterValue) === 0
+    return this.allTags.filter(
+      (tag) => tag.toLowerCase().indexOf(filterValue) === 0
     );
+  }
+
+  updateSong() {
+    const updatedSong = this.currentSong;
+    updatedSong.tags = this.tags;
+    this.playlistService.updateSong(updatedSong);
+    this.currentSong = updatedSong;
+    this.tags = this.currentSong.tags;
+  }
+
+  padZero(num) {
+    if (num < 10) {
+      return `0${num}`;
+    }
+    return num;
   }
 }

@@ -47,12 +47,12 @@ export class PlaylistService {
   }
 
   public deleteSong(song: Song) {
-    this.songDoc = this.afs.doc(`songs/${song.id}`);
+    this.songDoc = this.playlistCollection.doc(song.id);
     this.songDoc.delete();
   }
 
   public updateSong(song: Song) {
-    this.songDoc = this.afs.doc(`songs/${song.id}`);
+    this.songDoc = this.playlistCollection.doc(song.id);
     let updatedSong: Song = {
       uid: song.uid,
       tags: song.tags,

@@ -1,7 +1,9 @@
 <mat-toolbar class="navbar">
-  <div>Playlist Plus</div>
+  <a routerLink="">
+    <div>Playlist <span class="primary-color">Plus</span></div>
+  </a>
   <div *ngIf="auth.user$ | async as user; else login">
-    <span>{{ user.displayName }}</span>
+    <!-- <span>{{ user.displayName }}</span> -->
     <button mat-stroked-button routerLink="/listen">Listen</button>
     <button mat-stroked-button routerLink="/about">About</button>
     <button mat-flat-button (click)="auth.signOut()">Sign Out</button>

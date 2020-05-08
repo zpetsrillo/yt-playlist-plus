@@ -21,6 +21,7 @@ import { AboutComponent } from './components/about/about.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './modules/material/material.module';
+import { HomeComponent } from './components/home/home.component';
 
 const config = {
   apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
@@ -38,6 +39,7 @@ const config = {
     ListenComponent,
     NavbarComponent,
     AboutComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

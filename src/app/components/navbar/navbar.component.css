@@ -5,3 +5,12 @@ button {
 .navbar {
   justify-content: space-between;
 }
+
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+.primary-color {
+  color: #9c27b0;
+}
