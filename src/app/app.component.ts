@@ -12,4 +12,8 @@ export class AppComponent {
     public authService: AuthService,
     public playlistService: PlaylistService
   ) {}
+
+  getSubs() {
+    this.authService.getVideo();
+  }
 }
