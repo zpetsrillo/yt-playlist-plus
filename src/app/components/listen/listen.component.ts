@@ -24,7 +24,7 @@ export class ListenComponent implements OnInit {
   watchCode: string;
   inputWatchCode: string;
 
-  player: YT.Player;
+  player: any;
 
   visible = true;
   selectable = true;
@@ -71,7 +71,7 @@ export class ListenComponent implements OnInit {
   }
 
   // Run on initial player load
-  savePlayer(player: YT.Player) {
+  savePlayer(player: any) {
     this.player = player;
     this.playVideo(this.player, this.currentSong.watchCode);
   }
@@ -86,7 +86,7 @@ export class ListenComponent implements OnInit {
   }
 
   // Play video for given player
-  playVideo(player: YT.Player, watchCode: string) {
+  playVideo(player: any, watchCode: string) {
     player.cueVideoById(watchCode);
     player.playVideo();
   }

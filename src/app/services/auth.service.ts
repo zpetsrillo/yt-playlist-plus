@@ -46,15 +46,18 @@ export class AuthService {
     const credential = auth.GoogleAuthProvider.credential(token);
 
     const info = await this.afAuth.signInWithCredential(credential);
-    // const provider = new auth.GoogleAuthProvider();
-    // const credential = await this.afAuth.signInWithPopup(provider);
+
     this.router.navigate(['/listen']);
     return this.updateUserData(info.user);
   }
 
   async signOut() {
-    await this.afAuth.signOut();
-    return this.router.navigate(['/']);
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(async () => {
+      await this.afAuth.signOut();
+      auth2.disconnect();
+    });
+    this.router.navigate(['/']);
   }
 
   private updateUserData({ uid, email, displayName }: User) {
@@ -77,8 +80,6 @@ export class AuthService {
 
   initClient() {
     gapi.load('client', () => {
-      console.log('loaded client');
-
       gapi.client.init({
         apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
         clientId:
@@ -94,7 +95,7 @@ export class AuthService {
   }
 
   async getVideo() {
-    const video = await gapi.client.youtube.subscriptions
+    await gapi.client.youtube.subscriptions
       .list({
         part: 'snippet,contentDetails',
         mine: true,
@@ -108,7 +109,5 @@ export class AuthService {
           console.error('Execute error', err);
         }
       );
-
-    console.log(video);
   }
 }
