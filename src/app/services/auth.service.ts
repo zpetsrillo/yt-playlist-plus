@@ -19,13 +19,14 @@ declare var gapi: any;
 })
 export class AuthService {
   user$: Observable<User>;
+  google: any = gapi;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     private router: Router
   ) {
-    this.initClient();
+    // this.initClient();
     this.user$ = this.afAuth.authState.pipe(
       switchMap((user) => {
         if (user) {
@@ -38,7 +39,7 @@ export class AuthService {
   }
 
   async googleSignin() {
-    const googleAuth = gapi.auth2.getAuthInstance();
+    const googleAuth = this.google.auth2.getAuthInstance();
     const googleUser = await googleAuth.signIn();
 
     const token = googleUser.getAuthResponse().id_token;
@@ -52,7 +53,7 @@ export class AuthService {
   }
 
   async signOut() {
-    const auth2 = gapi.auth2.getAuthInstance();
+    const auth2 = this.google.auth2.getAuthInstance();
     auth2.signOut().then(async () => {
       await this.afAuth.signOut();
       auth2.disconnect();
@@ -76,38 +77,5 @@ export class AuthService {
 
   public getUser() {
     return this.user$;
-  }
-
-  initClient() {
-    gapi.load('client', () => {
-      gapi.client.init({
-        apiKey: 'AIzaSyBLEwGz5lDQ1DKH2GFqD3fPqnXVHFp2l6o',
-        clientId:
-          '923959586301-ftjupjk7i5itov3nps1t13pnb1usp1tu.apps.googleusercontent.com',
-        discoveryDocs: [
-          'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest',
-        ],
-        scope: 'https://www.googleapis.com/auth/youtube.readonly',
-      });
-
-      gapi.client.load('youtube', 'v3');
-    });
-  }
-
-  async getVideo() {
-    await gapi.client.youtube.subscriptions
-      .list({
-        part: 'snippet,contentDetails',
-        mine: true,
-      })
-      .then(
-        function (response) {
-          // Handle the results here (response.result has the parsed body).
-          console.log('Response', response);
-        },
-        function (err) {
-          console.error('Execute error', err);
-        }
-      );
   }
 }

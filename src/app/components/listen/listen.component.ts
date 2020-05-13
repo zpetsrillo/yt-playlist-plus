@@ -10,6 +10,7 @@ import {
 } from '@angular/material/autocomplete';
 
 import { Song } from '../../services/song.model';
+import { YoutubeService } from 'src/app/services/youtube.service';
 
 @Component({
   selector: 'app-listen',
@@ -38,7 +39,10 @@ export class ListenComponent implements OnInit {
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-  constructor(public playlistService: PlaylistService) {}
+  constructor(
+    public playlistService: PlaylistService,
+    public youtubeService: YoutubeService
+  ) {}
 
   ngOnInit(): void {
     this.playlistService.getPlaylist().subscribe((songs) => {
@@ -231,5 +235,9 @@ export class ListenComponent implements OnInit {
       return `0${num}`;
     }
     return num;
+  }
+
+  getVideoInfo() {
+    this.youtubeService.getVideo(this.currentSong.watchCode);
   }
 }
