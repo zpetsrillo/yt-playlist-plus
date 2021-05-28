@@ -1,27 +1,97 @@
-# SongRater
+# PlaylistPlus
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.3.
+## Summary
+Platform for listening to YouTube playlists with extended functionality such as playlist collaboration, filtering, and working shuffle.
 
-## Development server
+## Motivation
+When using YouTube to listen to music, I found that the shuffle feature would often loop on the same group of songs. This along with some other annoyances of YouTube pushed me towards using Spotify. Spotify however also has issues such as the inability to collaborate on playlists.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Site layout
+- Home
+	- Sign up
+	- What is PlaylistPlus
+- About
+	- Description of site
+	- Donate link
+- Listen
+	- User playlists
+	- Songs
+- Browse/Search
+	- Songs
+	- Playlists
+	- Users
 
-## Code scaffolding
+## Database Structure
+### Users
+- uid
+	- email
+	- displayName
+	- uid
+- playlists
+	- playlistId
+	- title
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Songs
+- watchCode
+	- songInfo
+	- collectiveTags
 
-## Build
+### Playlists
+- playlistId
+	- title
+	- owner
+	- permissions
+- watchCode
+	- songInfo
+	- playlistSpecificTags
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Features
+### Playlists
+Store songs into playlists for convent listening. Songs in a playlist can be tagged to allow for easy filtering. Users should be able to filter a playlist by multiple tags at a time. Playlists should have the option to be public or private. Users should have the option to create multiple playlists.
 
-## Running unit tests
+### Shuffle options
+Multiple shuffle options such as:
+- true random
+- random without repeat
+- queue
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Playlist collaboration
+Grant permission to other users for access to view or moderate playlists.
 
-## Running end-to-end tests
+### Tag filtering
+Allow for users to place tags on individual songs. Using these tags playlists can then be filtered to dynamically alter a playlists based on short term listening preference. For example if someone was feeling down they might filter for all of their songs labeled as 'sad' or 'slow'. Users should also be able to filter for multiple tags at once.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Song import
+Add song to playlist by input of YouTube watch code or URL.
 
-## Further help
+## Search
+Search through songs and playlists that have already been added to PlaylistPlus. Users should also be able to find popular songs based on tags. Search can also be used to find other users to look up music that your friends are listening to if they have made their playlist public.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Playlist import
+Allows users the ability to import existing playlists from YouTube into PlaylistPlus. Users should be prompted upon creating an account to import one of their existing playlists. Allow option to apply a tag to all songs that are imported with a playlist. This could also be used to merge a playlist from YouTube into a playlist on PlaylistPlus.
+
+## API
+### Playlist
+- Song order
+- Queue
+- Filter
+	- Tags
+	- Keyword
+- Current song
+
+### Database
+- CRUD Song
+- CRUD Playlist
+- Authorization
+
+### YouTube GAPI
+- Get song
+- Get playlist
+- Get user playlist
+
+### YouTube Player
+- Change song
+- Play/Pause
+- Skip
+- Time controls
+
